@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <!-- lets the project be built (not run) from macOS/Linux too -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>CamBar</AssemblyName>
+    <RootNamespace>CamBar</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
+    <Version>0.1.0</Version>
+    <Product>CamBar</Product>
+    <!-- WPF reads DPI awareness from the manifest; the WinForms analyzer only knows its own setting -->
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- WPF and Windows Forms (tray icon, monitor list) share names such as Application and Button -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CamBar.Core\CamBar.Core.csproj" />
+    <PackageReference Include="NAudio.WinMM" Version="2.2.1" />
+    <Resource Include="Resources\AppIcon.ico" />
+  </ItemGroup>
+</Project>

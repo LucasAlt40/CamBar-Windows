@@ -1,7 +1,8 @@
 .DS_Store
-.build/
-build/
-.swiftpm/
+bin/
+obj/
+publish/
+.vs/
 .vscode/
-*.xcodeproj
-xcuserdata/
+*.user
+*.suo
