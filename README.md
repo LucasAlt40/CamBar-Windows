@@ -17,6 +17,7 @@ Feito para câmeras genéricas (como as que usam o app Yoosee), que costumam ter
 - **Câmera fixada:** mini-janela flutuante com uma câmera em um dos quatro cantos da tela, acima das outras janelas e fora do `Alt+Tab`. O tamanho acompanha a tela (cerca de 1/5 da largura, de 280 a 560 px lógicos, sempre 16:9) ou pode ser ajustado arrastando a alça no canto interno; clique duas vezes na alça para voltar ao automático. Funciona com vários monitores e escalas de DPI diferentes. Câmera, canto, monitor e tamanho são lembrados ao reabrir o app.
 - **Visão geral:** grade com todas as câmeras, estados de conexão e botão de reconectar.
 - **Configuração:** janela responsiva com pré-visualização ao vivo e teste de sinal.
+- **Procurar câmeras na rede:** com a sua permissão, faz uma busca ONVIF (WS-Discovery) e testa as portas RTSP 554 e 8554 da sua sub-rede local (até 254 endereços). Cada aparelho encontrado pode ser adicionado com IP e portas já preenchidos. Nada sai da rede local e nenhuma senha é enviada.
 - **Baixo consumo:** as câmeras ficam conectadas em modo espera quando o painel está fechado, e vão para espera também com a sessão bloqueada ou o PC suspenso (ver [Desempenho](#desempenho)).
 - **Segurança:** senhas guardadas no Gerenciador de Credenciais do Windows.
 

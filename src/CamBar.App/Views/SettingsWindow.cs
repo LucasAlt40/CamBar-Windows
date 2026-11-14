@@ -99,6 +99,20 @@ public sealed class SettingsWindow : DarkWindow
         RefreshAll();
     }
 
+    private ScanWindow? _scanner;
+
+    private void OpenScanner()
+    {
+        if (_scanner is { IsVisible: true })
+        {
+            _scanner.Activate();
+            return;
+        }
+        _scanner = new ScanWindow(_env, device => _model.StartNewCamera(device)) { Owner = this };
+        _scanner.Closed += (_, _) => _scanner = null;
+        _scanner.Show();
+    }
+
     // MARK: Layout
 
     private UIElement BuildTitleBar()
@@ -141,7 +155,17 @@ public sealed class SettingsWindow : DarkWindow
         addRow.Children.Add(UI.Card(UI.Text("Ctrl+N", 10, foreground: Palette.White(0.5), mono: true), Palette.Black(0.4), 5, Brushes.Transparent, new Thickness(6, 2, 6, 2)));
         add.Content = UI.Card(addRow, Palette.White(0.05), 9, Palette.White(0.1), new Thickness(0, 8, 0, 8));
         add.Click += (_, _) => _model.StartNewCamera();
-        add.Margin = new Thickness(12);
+        add.Margin = new Thickness(12, 0, 12, 12);
+
+        var scan = new Button { Style = (Style)Application.Current.FindResource("BareButton"), Focusable = false, ToolTip = "Encontrar câmeras na sua rede local" };
+        var scanRow = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Center };
+        scanRow.Children.Add(UI.Icon(UI.Glyph.Search, 11, Palette.Accent));
+        var scanText = UI.Text("Procurar câmeras na rede", 12, FontWeights.Medium, Palette.Accent);
+        scanText.Margin = new Thickness(8, 0, 0, 0);
+        scanRow.Children.Add(scanText);
+        scan.Content = UI.Card(scanRow, Palette.With(Palette.Accent, 0.08), 9, Palette.With(Palette.Accent, 0.3), new Thickness(0, 8, 0, 8));
+        scan.Click += (_, _) => OpenScanner();
+        scan.Margin = new Thickness(12, 12, 12, 8);
 
         var scroll = new ScrollViewer { Content = _rows, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled };
 
@@ -153,6 +177,8 @@ public sealed class SettingsWindow : DarkWindow
         dock.Children.Add(topRule);
         DockPanel.SetDock(add, Dock.Bottom);
         dock.Children.Add(add);
+        DockPanel.SetDock(scan, Dock.Bottom);
+        dock.Children.Add(scan);
         var bottomRule = UI.Rule();
         DockPanel.SetDock(bottomRule, Dock.Bottom);
         dock.Children.Add(bottomRule);

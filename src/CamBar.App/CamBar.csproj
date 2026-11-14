@@ -13,7 +13,7 @@
     <RootNamespace>CamBar</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Product>CamBar</Product>
     <!-- WPF reads DPI awareness from the manifest; the WinForms analyzer only knows its own setting -->
     <NoWarn>$(NoWarn);WFAC010</NoWarn>

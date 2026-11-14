@@ -108,9 +108,18 @@ public sealed class SettingsViewModel : ObservableObject
         Store.SelectedId = camera.Id;
     }
 
-    public void StartNewCamera()
+    public void StartNewCamera() => StartNewCamera(null);
+
+    /// <summary>New camera, prefilled with what the network scan found (address and ports).</summary>
+    public void StartNewCamera(DiscoveredDevice? found)
     {
-        Draft = new Camera();
+        Draft = found is null ? new Camera() : new Camera
+        {
+            Name = found.Name ?? $"Câmera {found.Host}",
+            Host = found.Host,
+            Port = found.RtspPort ?? 554,
+            OnvifPort = found.OnvifPort,
+        };
         SelectedId = _draft.Id;
         Password = "";
         IsNew = true;

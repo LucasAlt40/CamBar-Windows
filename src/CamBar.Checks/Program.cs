@@ -285,5 +285,39 @@ Suite("Atualizações", () =>
     Check(UpdateChecker.Compare(null, "0.3.0").Status == UpdateStatus.NoReleases, "sem releases publicadas");
 });
 
+Suite("Busca na rede", () =>
+{
+    var me = System.Net.IPAddress.Parse("192.168.1.37");
+    var hosts = NetworkScanner.HostsInSubnet(me, 24);
+    Check(hosts.Count == 253 && hosts[0].ToString() == "192.168.1.1" && hosts[^1].ToString() == "192.168.1.254", "/24 sem rede, broadcast e o próprio PC");
+    Check(!hosts.Contains(me), "não testa o próprio computador");
+    Check(NetworkScanner.HostsInSubnet(System.Net.IPAddress.Parse("10.0.5.9"), 16).Count == 253, "rede grande fica limitada à /24 do PC");
+    Check(new LocalNetwork(System.Net.IPAddress.Parse("10.0.5.9"), 16).Description == "10.0.5.0/24", "descrição da rede mostrada ao usuário");
+    Check(NetworkScanner.HostsInSubnet(System.Net.IPAddress.Parse("192.168.0.10"), 30).Count == 1, "rede /30");
+    Check(NetworkScanner.IsPrivate(System.Net.IPAddress.Parse("172.20.1.1")) && !NetworkScanner.IsPrivate(System.Net.IPAddress.Parse("172.32.0.1"))
+          && !NetworkScanner.IsPrivate(System.Net.IPAddress.Parse("8.8.8.8")), "só faixas privadas");
+
+    const string match = """
+    <SOAP-ENV:Envelope><SOAP-ENV:Body><d:ProbeMatches><d:ProbeMatch>
+    <d:Scopes>onvif://www.onvif.org/type/video_encoder onvif://www.onvif.org/name/IPCAM%20Quintal onvif://www.onvif.org/hardware/C6F0SgZ3N0PdL2</d:Scopes>
+    <d:XAddrs>http://192.168.1.20:5000/onvif/device_service http://[fe80::1]:5000/onvif/device_service</d:XAddrs>
+    </d:ProbeMatch></d:ProbeMatches></SOAP-ENV:Body></SOAP-ENV:Envelope>
+    """;
+    var devices = NetworkScanner.ParseProbeMatches(match);
+    Check(devices.Count == 1 && devices[0].Host == "192.168.1.20" && devices[0].OnvifPort == 5000, "lê host e porta ONVIF, ignora IPv6");
+    Check(devices[0].Name == "IPCAM Quintal" && devices[0].Hardware == "C6F0SgZ3N0PdL2", "nome e modelo anunciados");
+    Check(NetworkScanner.ParseProbeMatches("lixo").Count == 0, "resposta inválida não quebra");
+    Check(NetworkScanner.ProbeMessage(Guid.Empty).Contains("NetworkVideoTransmitter"), "procura só transmissores de vídeo");
+
+    Check(NetworkScanner.IsRtspResponse("RTSP/1.0 401 Unauthorized\r\n"), "RTSP pedindo senha conta como câmera");
+    Check(!NetworkScanner.IsRtspResponse("HTTP/1.1 400 Bad Request"), "HTTP não é RTSP");
+    Check(NetworkScanner.OptionsRequest("1.2.3.4", 554).StartsWith("OPTIONS rtsp://1.2.3.4:554/ RTSP/1.0\r\nCSeq: 1"), "pedido OPTIONS");
+
+    var merged = NetworkScanner.Merge(new DiscoveredDevice { Host = "h", RtspPort = 554 }, devices[0] with { Host = "h" });
+    Check(merged.RtspPort == 554 && merged.OnvifPort == 5000 && merged.Evidence == "RTSP na porta 554 • ONVIF na porta 5000", "junta RTSP e ONVIF do mesmo aparelho");
+    Check(new DiscoveredDevice { Host = "h", RtspPort = 554 }.Title == "Possível câmera", "título sem nome anunciado");
+    Check(NetworkScanner.CompareHosts("192.168.1.9", "192.168.1.10") < 0, "ordena IPs como números");
+});
+
 Console.WriteLine(failures == 0 ? $"\n{total} checks passaram." : $"\n{failures} de {total} checks falharam.");
 return failures == 0 ? 0 : 1;
