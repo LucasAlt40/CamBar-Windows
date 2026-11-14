@@ -71,14 +71,14 @@ public sealed class OverviewWindow : DarkWindow
     private UIElement BuildHeader()
     {
         var dock = new DockPanel { Height = 46, Margin = new Thickness(16, 0, 14, 0), LastChildFill = false };
-        var left = new StackPanel { Orientation = Orientation.Horizontal };
+        var left = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         left.Children.Add(UI.Text("CamBar — Visão Geral", 13, FontWeights.SemiBold));
         var chip = UI.Capsule(_channels, Palette.White(0.06), Brushes.Transparent, new Thickness(9, 3, 9, 3));
         chip.Margin = new Thickness(12, 0, 0, 0);
         left.Children.Add(chip);
         dock.Children.Add(left);
 
-        var right = new StackPanel { Orientation = Orientation.Horizontal };
+        var right = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         DockPanel.SetDock(right, Dock.Right);
         right.Children.Add(Counter(Palette.Accent, _onlineText));
         var offline = Counter(Palette.Danger, _offlineText);
@@ -96,7 +96,7 @@ public sealed class OverviewWindow : DarkWindow
 
     private static StackPanel Counter(Brush color, TextBlock text)
     {
-        var row = new StackPanel { Orientation = Orientation.Horizontal };
+        var row = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         var dot = UI.Dot(color);
         dot.Margin = new Thickness(0, 0, 6, 0);
         row.Children.Add(dot);
@@ -178,7 +178,7 @@ internal sealed class OverviewTile : Border
         UI.RoundClip(this, 14);
 
         var header = new DockPanel { Height = 40, Margin = new Thickness(12, 0, 12, 0), LastChildFill = false };
-        var left = new StackPanel { Orientation = Orientation.Horizontal };
+        var left = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         _dot.Margin = new Thickness(0, 0, 8, 0);
         left.Children.Add(_dot);
         var name = UI.Text(camera.Name, 12.5, FontWeights.SemiBold);
@@ -188,10 +188,11 @@ internal sealed class OverviewTile : Border
         var tag = UI.Card(UI.Text($"CAM {number:00}", 10, foreground: Palette.White(0.55), mono: true), Palette.White(0.06), 5,
                           Brushes.Transparent, new Thickness(6, 2, 6, 2));
         tag.Margin = new Thickness(8, 0, 0, 0);
+        tag.VerticalAlignment = VerticalAlignment.Center;
         left.Children.Add(tag);
         header.Children.Add(left);
 
-        var right = new StackPanel { Orientation = Orientation.Horizontal };
+        var right = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         DockPanel.SetDock(right, Dock.Right);
         _fps.Margin = new Thickness(0, 0, 8, 0);
         right.Children.Add(_fps);

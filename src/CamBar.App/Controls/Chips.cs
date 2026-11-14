@@ -49,7 +49,7 @@ public sealed class StatusChip : Border
         row.Children.Add(_dot);
         row.Children.Add(_label);
         Child = row;
-        CornerRadius = new CornerRadius(999);
+        UI.MakeRound(this);
         BorderThickness = new Thickness(1);
         var vertical = style == ChipStyle.Overlay ? 5 : 4;
         Padding = new Thickness(9, vertical, 9, vertical);
@@ -81,7 +81,8 @@ public sealed class TelemetryChip : Border
     public TelemetryChip()
     {
         Child = _text;
-        CornerRadius = new CornerRadius(999);
+        UI.MakeRound(this);
+        VerticalAlignment = VerticalAlignment.Center;
         Background = Palette.Black(0.35);
         BorderBrush = Palette.Hairline;
         BorderThickness = new Thickness(1);

@@ -18,7 +18,7 @@ public static class UI
         public const string PinFilled = "";
         public const string Unpin = "";
         public const string Expand = "";
-        public const string Grid = "";
+        public const string Grid = "\uE80A";
         public const string Settings = "";
         public const string Add = "";
         public const string Remove = "";
@@ -38,7 +38,8 @@ public static class UI
         public const string Down = "";
         public const string Left = "";
         public const string Right = "";
-        public const string Monitor = "";
+        public const string Monitor = "\uE7F4";
+        public const string Sync = "\uE895";
     }
 
     public static TextBlock Text(string text, double size = 12, FontWeight? weight = null, Brush? foreground = null, bool mono = false) =>
@@ -56,7 +57,9 @@ public static class UI
         new()
         {
             Text = glyph,
-            FontFamily = Palette.IconFont,
+            // Fluent/MDL2 glyphs live in the Private Use Area; anything else (e.g. the ↖ corner arrows) is a
+            // regular Unicode symbol that the icon font lacks and would draw as an empty box
+            FontFamily = glyph.Length > 0 && glyph[0] is >= '\uE000' and <= '\uF8FF' ? Palette.IconFont : Palette.SymbolFont,
             FontSize = size,
             Foreground = foreground ?? Brushes.White,
             VerticalAlignment = VerticalAlignment.Center,
@@ -75,9 +78,13 @@ public static class UI
     public static Ellipse Dot(Brush fill, double size = 6) =>
         new() { Width = size, Height = size, Fill = fill, VerticalAlignment = VerticalAlignment.Center };
 
-    /// <summary>Rounded container with an optional hairline border.</summary>
-    public static Border Card(UIElement? child, Brush background, double radius = 12, Brush? stroke = null, Thickness? padding = null) =>
-        new()
+    /// <summary>Corner radius meaning "fully round": a capsule, or a circle when the box is square.</summary>
+    public const double Round = 999;
+
+    /// <summary>Rounded container with an optional hairline border. <see cref="Round"/> makes a capsule.</summary>
+    public static Border Card(UIElement? child, Brush background, double radius = 12, Brush? stroke = null, Thickness? padding = null)
+    {
+        var border = new Border
         {
             Child = child,
             Background = background,
@@ -86,13 +93,37 @@ public static class UI
             BorderThickness = new Thickness(stroke is null && background == Brushes.Transparent ? 0 : 1),
             Padding = padding ?? new Thickness(0),
         };
+        if (radius >= Round) MakeRound(border);
+        return border;
+    }
 
-    public static Border Capsule(UIElement child, Brush background, Brush? stroke = null, Thickness? padding = null) =>
-        Card(child, background, 999, stroke, padding);
+    /// <summary>Small pill that keeps its natural height (inside a row it would otherwise stretch into a tall oval).</summary>
+    public static Border Capsule(UIElement child, Brush background, Brush? stroke = null, Thickness? padding = null)
+    {
+        var border = Card(child, background, Round, stroke, padding);
+        border.VerticalAlignment = VerticalAlignment.Center;
+        return border;
+    }
+
+    /// <summary>
+    /// Keeps the corner radius at half the shorter side. WPF does not clamp a large radius into a capsule:
+    /// it squeezes the corners into ellipses, so the whole border turns into an oval.
+    /// </summary>
+    public static void MakeRound(Border border)
+    {
+        void Apply()
+        {
+            var w = double.IsNaN(border.Width) ? border.ActualWidth : border.Width;
+            var h = double.IsNaN(border.Height) ? border.ActualHeight : border.Height;
+            border.CornerRadius = new CornerRadius(w > 0 && h > 0 ? Math.Min(w, h) / 2 : 0);
+        }
+        border.SizeChanged += (_, _) => Apply();
+        Apply();
+    }
 
     /// <summary>Round (or rounded-square) glyph button with a tooltip.</summary>
     public static Button IconButton(string glyph, string tooltip, Action onClick, double size = 30, double glyphSize = 12,
-                                    Brush? foreground = null, Brush? background = null, Brush? stroke = null, double radius = 999)
+                                    Brush? foreground = null, Brush? background = null, Brush? stroke = null, double radius = Round)
     {
         var face = Card(Icon(glyph, glyphSize, foreground ?? Palette.White(0.85)), background ?? Palette.White(0.06), radius,
                         stroke ?? Palette.White(0.1));
@@ -104,6 +135,7 @@ public static class UI
             Style = (Style)Application.Current.FindResource("BareButton"),
             ToolTip = tooltip,
             Focusable = false,
+            VerticalAlignment = VerticalAlignment.Center,
         };
         button.Click += (_, _) => onClick();
         return button;
@@ -125,7 +157,7 @@ public static class UI
             row.Children.Add(text);
             content = row;
         }
-        var button = new Button { Content = content, Style = (Style)Application.Current.FindResource("PillButton") };
+        var button = new Button { Content = content, Style = (Style)Application.Current.FindResource("PillButton"), VerticalAlignment = VerticalAlignment.Center };
         button.Click += (_, _) => onClick();
         return button;
     }

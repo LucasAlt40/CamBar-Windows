@@ -267,5 +267,23 @@ Suite("Persistência", () =>
     finally { if (Directory.Exists(dir)) Directory.Delete(dir, true); }
 });
 
+Suite("Atualizações", () =>
+{
+    Check(UpdateChecker.Normalize("v1.2.3") == "1.2.3", "tira o v da tag");
+    Check(UpdateChecker.Normalize("0.2.0+7d7f67fabc") == "0.2.0", "ignora o hash do build");
+    Check(UpdateChecker.IsNewer("0.10.0", "0.9.0"), "compara números, não texto");
+    Check(UpdateChecker.IsNewer("v0.2.0", "0.1.0+abc"), "tag nova é mais nova que a versão atual");
+    Check(!UpdateChecker.IsNewer("1.0", "1.0.0"), "1.0 e 1.0.0 são iguais");
+    Check(!UpdateChecker.IsNewer("0.1.0", "0.2.0"), "versão antiga não é atualização");
+
+    const string json = """{"tag_name":"v0.3.0","html_url":"https://github.com/x/y/releases/tag/v0.3.0","body":"Notas"}""";
+    var release = UpdateChecker.Parse(json);
+    Check(release == new ReleaseInfo("0.3.0", "https://github.com/x/y/releases/tag/v0.3.0", "Notas"), "lê a release do GitHub");
+    Check(UpdateChecker.Parse("{}") is null && UpdateChecker.Parse("não é json") is null, "resposta inválida não quebra");
+    Check(UpdateChecker.Compare(release, "0.2.0").Status == UpdateStatus.Available, "avisa quando há versão nova");
+    Check(UpdateChecker.Compare(release, "0.3.0").Status == UpdateStatus.UpToDate, "mesma versão está atualizada");
+    Check(UpdateChecker.Compare(null, "0.3.0").Status == UpdateStatus.NoReleases, "sem releases publicadas");
+});
+
 Console.WriteLine(failures == 0 ? $"\n{total} checks passaram." : $"\n{failures} de {total} checks falharam.");
 return failures == 0 ? 0 : 1;

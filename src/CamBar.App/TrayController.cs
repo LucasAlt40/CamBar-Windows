@@ -25,6 +25,7 @@ public sealed class TrayController : IDisposable
         contextMenu.Items.Add("Abrir painel", null, (_, _) => ShowPopover());
         contextMenu.Items.Add("Visão geral", null, (_, _) => router.ShowOverview());
         contextMenu.Items.Add("Gerenciar câmeras", null, (_, _) => router.ShowSettings());
+        contextMenu.Items.Add("Buscar atualizações", null, (_, _) => Services.Updates.CheckInteractively());
         contextMenu.Items.Add(new Forms.ToolStripSeparator());
         contextMenu.Items.Add("Sair", null, (_, _) => env.Quit());
 

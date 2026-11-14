@@ -133,13 +133,13 @@ public sealed class ViewerWindow : DarkWindow
 
         var row = new DockPanel { Margin = new Thickness(16, 0, 14, 0), Height = 46, VerticalAlignment = VerticalAlignment.Top, LastChildFill = false };
 
-        var left = new StackPanel { Orientation = Orientation.Horizontal };
+        var left = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         _name.Margin = new Thickness(0, 0, 12, 0);
         left.Children.Add(_name);
         left.Children.Add(_status);
         row.Children.Add(left);
 
-        var right = new StackPanel { Orientation = Orientation.Horizontal };
+        var right = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         DockPanel.SetDock(right, Dock.Right);
         var picker = UI.Capsule(new StackPanel { Orientation = Orientation.Horizontal, Children = { _hdButton, _sdButton } },
                                 Palette.Black(0.45), Palette.Hairline, new Thickness(2));
@@ -310,7 +310,7 @@ public sealed class ViewerWindow : DarkWindow
             row.Children.Add(_snapshot);
 
             Child = row;
-            CornerRadius = new CornerRadius(999);
+            UI.MakeRound(this);
             Background = Palette.Black(0.5);
             BorderBrush = Palette.White(0.12);
             BorderThickness = new Thickness(1);

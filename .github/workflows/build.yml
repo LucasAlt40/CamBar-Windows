@@ -23,7 +23,12 @@ jobs:
       - name: Core checks
         run: dotnet run --project src/CamBar.Checks -c Release --no-build
       - name: Publish single-file executable
-        run: dotnet publish src/CamBar.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+        shell: pwsh
+        run: |
+          # on a tag the executable carries that version, which "Buscar atualizações" compares against
+          $extra = @()
+          if ('${{ github.ref }}'.StartsWith('refs/tags/v')) { $extra += "-p:Version=$('${{ github.ref_name }}'.TrimStart('v'))" }
+          dotnet publish src/CamBar.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true @extra -o publish
       - uses: actions/upload-artifact@v4
         with:
           name: CamBar-win-x64

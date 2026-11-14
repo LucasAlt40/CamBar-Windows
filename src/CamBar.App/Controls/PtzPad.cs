@@ -41,7 +41,7 @@ public sealed class PtzPad : StackPanel
 
         // directional ring
         var ring = new Grid { Width = 124, Height = 124 };
-        ring.Children.Add(UI.Card(null, Palette.Black(0.5), 999, Palette.White(0.12)));
+        ring.Children.Add(UI.Card(null, Palette.Black(0.5), UI.Round, Palette.White(0.12)));
         ring.Children.Add(Place(HoldButton(UI.Glyph.Up, "up", tilt: Speed), 0, -40));
         ring.Children.Add(Place(HoldButton(UI.Glyph.Down, "down", tilt: -Speed), 0, 40));
         ring.Children.Add(Place(HoldButton(UI.Glyph.Left, "left", pan: -Speed), -40, 0));

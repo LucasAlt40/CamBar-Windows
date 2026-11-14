@@ -43,4 +43,5 @@ public static class Palette
     public static readonly FontFamily UiFont = new("Segoe UI Variable Text, Segoe UI");
     public static readonly FontFamily MonoFont = new("Cascadia Mono, Consolas");
     public static readonly FontFamily IconFont = new("Segoe Fluent Icons, Segoe MDL2 Assets");
+    public static readonly FontFamily SymbolFont = new("Segoe UI Symbol, Segoe UI");
 }

@@ -132,11 +132,11 @@ public sealed class MenuWindow : Window
 
     private UIElement BuildHeader()
     {
-        var circle = UI.Card(UI.Icon(UI.Glyph.Camera, 14, Palette.White(0.85)), Palette.White(0.06), 999, Palette.White(0.1));
+        var circle = UI.Card(UI.Icon(UI.Glyph.Camera, 14, Palette.White(0.85)), Palette.White(0.06), UI.Round, Palette.White(0.1));
         circle.Width = circle.Height = 30;
 
         var dock = new DockPanel { Margin = new Thickness(14, 12, 14, 12), LastChildFill = false };
-        var left = new StackPanel { Orientation = Orientation.Horizontal };
+        var left = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         _title.Margin = new Thickness(10, 0, 8, 0);
         left.Children.Add(circle);
         left.Children.Add(_title);
@@ -146,6 +146,10 @@ public sealed class MenuWindow : Window
         var quit = UI.IconButton(UI.Glyph.Power, "Sair", _env.Quit, 30, 12);
         DockPanel.SetDock(quit, Dock.Right);
         dock.Children.Add(quit);
+        var update = UI.IconButton(UI.Glyph.Sync, "Buscar atualizações", () => { Dismiss(); Services.Updates.CheckInteractively(); }, 30, 12);
+        update.Margin = new Thickness(0, 0, 8, 0);
+        DockPanel.SetDock(update, Dock.Right);
+        dock.Children.Add(update);
         return dock;
     }
 
@@ -184,13 +188,13 @@ public sealed class MenuWindow : Window
     {
         var dock = new DockPanel { Margin = new Thickness(14, 11, 14, 11), LastChildFill = false };
 
-        var left = new StackPanel { Orientation = Orientation.Horizontal };
+        var left = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         _footerIcon.Margin = new Thickness(0, 0, 8, 0);
         left.Children.Add(_footerIcon);
         left.Children.Add(_footerText);
         dock.Children.Add(left);
 
-        var right = new StackPanel { Orientation = Orientation.Horizontal };
+        var right = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         DockPanel.SetDock(right, Dock.Right);
 
         var keep = new ToggleButton

@@ -35,7 +35,7 @@ O executável publicado é autocontido: não precisa instalar o .NET.
 
 ## Baixar
 
-Baixe o `CamBar.exe` da [página de releases](https://github.com/LucasAlt40/CamBar-Windows/releases/latest), instale o ffmpeg e execute. O Windows SmartScreen pode avisar que o app não é assinado: clique em **Mais informações** → **Executar assim mesmo**.
+Baixe o `CamBar.exe` da [página de releases](https://github.com/LucasAlt40/CamBar-Windows/releases/latest), instale o ffmpeg e execute. Para saber se há versão nova, use o botão de atualizações no topo do painel (ou **Buscar atualizações** no menu do ícone). O Windows SmartScreen pode avisar que o app não é assinado: clique em **Mais informações** → **Executar assim mesmo**.
 
 ## Compilar e executar
 

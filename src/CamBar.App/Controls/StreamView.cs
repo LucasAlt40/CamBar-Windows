@@ -39,7 +39,7 @@ public static class FailureView
         var panel = new StackPanel { HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(28, 0, 28, 0) };
 
         var icon = UI.Card(UI.Icon(UI.Glyph.Warning, 15, alert ? Palette.DangerSoft : Palette.White(0.7)),
-                           alert ? Palette.With(Palette.Danger, 0.12) : Palette.White(0.06), 999,
+                           alert ? Palette.With(Palette.Danger, 0.12) : Palette.White(0.06), UI.Round,
                            alert ? Palette.With(Palette.Danger, 0.3) : Palette.White(0.1));
         icon.Width = icon.Height = 38;
         icon.HorizontalAlignment = HorizontalAlignment.Center;
